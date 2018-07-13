@@ -1,0 +1,101 @@
+#this is modified
+
+
+{
+"Resources" : 
+{     
+	"myVPC" : 
+	{         
+	"Type" : "AWS::EC2::VPC",         
+	"Properties" : 
+		{           
+		"CidrBlock" : "10.0.0.0/16"
+		}
+	},
+	"subnet1" :
+	{
+	"Type" : "AWS::EC2::Subnet",
+	"Properties" :
+		{
+		"CidrBlock" : "10.0.0.0/24",
+		"VpcId" : { "Ref" : "myVPC"}
+		}	
+	},
+	"subnet2" :
+	{
+	"Type" : "AWS::EC2::Subnet",
+	"Properties" :
+		{
+		"CidrBlock" : "10.0.1.0/24",
+		"VpcId" : { "Ref" : "myVPC"}
+		}	
+	},
+	"RT1" :
+	{
+	"Type" : "AWS::EC2::RouteTable",
+	"Properties" :
+		{
+		"VpcId" : { "Ref" : "myVPC"}
+		}
+	} ,
+	"InternetGateway" :
+	{
+		"Type" : "AWS::EC2::InternetGateway",
+		"Properties" : 
+		{
+			"Tags" : [{"Key" : "mykey", "Value" : "venkat"}]
+		}
+	},
+	"Iga" :
+	{
+		"Type" : "AWS::EC2::VPCGatewayAttachment",
+		"Properties" : 
+		{
+			"VpcId" : { "Ref" : "myVPC"},
+			"InternetGatewayId" : { "Ref" : "InternetGateway"}
+		}
+	
+           } ,
+	"Route" :
+	{
+		"Type" : "AWS::EC2::Route",
+		"Properties" : 
+		{
+			"DestinationCidrBlock" : "0.0.0.0/0",
+			"GatewayId" : { "Ref" : "InternetGateway"},
+			"RouteTableId" : "rtb-abe8e6d7"
+		}
+	
+	} ,
+	"SNRTA" :
+	{
+		"Type" : "AWS::EC2::SubnetRouteTableAssociation",
+		"Properties" : 
+		{
+			"RouteTableId" : "rtb-abe8e6d7",
+			"SubnetId" : {"Ref" : "subnet2"}
+		}
+	},
+	"SNRTA1" :
+	{
+		"Type" : "AWS::EC2::SubnetRouteTableAssociation",
+		"Properties" : 
+		{
+			"RouteTableId" : "rtb-f2ede38e",
+			"SubnetId" : {"Ref" : "subnet1"}
+		}
+	},
+	"MyEC2Instance" : 
+     {     
+         "Type" : "AWS::EC2::Instance",     
+		"Properties" : 
+		{       
+        "ImageId" : "ami-43a15f3e",      
+        "InstanceType" : "t2.micro",       
+        "KeyName" : "raju",
+        "SecurityGroups" : [ "default" ],
+		"SubnetId" : "subnet-03259e49"
+		}
+	  }
+}
+}
